@@ -60,21 +60,26 @@ To debug your application running in a container, start the container using:
     appsody debug --docker-options "--cap-add=SYS_PTRACE --security-opt seccomp=unconfined"
 ```
 
-The command will start the LLDB platform and wait for incoming connections from any address to port 1234. 
+The command will start the [gdbgui](https://www.gdbgui.com/) platform and make a debugging environment available on port 5000. 
 
-You can connect `lldb` in remote debug mode to this container as follows:
+Once the environment is loaded open a browser at http://localhost:5000/
 
-```bash
-lldb \
-  -o "platform select remote-linux" \
-  -o "platform connect connect://localhost:1234" \
-  -o "platform settings -w /project/server/bin/target/debug" \
-  -o "file rust-tide-server" 
+There is a known issue where the debugger [can't find the starting file](https://www.gdbgui.com/guides/#debugging-rust-programs)
+
+So type the following in to the search bar.
+
+```
+/project/user-app/src/lib.rs
 ```
 
-Once in lldb, you can use `breakpoint set` to set breakpoints in your application, and then `run` to start the app.
+Set a breakpoint by clicking to the left of the line number.
 
-**NOTE:** Due to a current limitation, breakpoints must be set _before_ the application is run. Breakpoints can be disabled, but cannot be re-enabled without restarting the app. After adding or re-enabling breakpoints, restart the app with `process kill` and then `run`.
+Type run in the (gdb) prompt
+
+Open a browser and call the service with http://localhost:8000 
+
+The break point should be hit and the local variables will populate. 
+Due to threading you may need to click the reload icon at the top right.
 
 ## License
 
